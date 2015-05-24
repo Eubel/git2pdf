@@ -1,0 +1,11 @@
+/**
+ * represents a commit reference for bibtex reference
+ * @author daniel
+ *
+ */
+public class CommitReference {
+	String id;
+	String author;
+	
+
+}

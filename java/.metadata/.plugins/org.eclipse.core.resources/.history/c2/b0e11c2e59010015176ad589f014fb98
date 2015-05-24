@@ -1,0 +1,7 @@
+
+public class BlamedLine {
+	String commitHash;
+	String author;
+	String date;
+	String lineContent;
+}

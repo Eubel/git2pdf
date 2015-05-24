@@ -1,0 +1,16 @@
+/**
+ * represents one line in one file of one git commit
+ * @author daniel
+ *
+ */
+public class BlamedLine {
+	
+	CommitReference refernce;
+	String lineContent;
+	
+	public BlamedLine(String commitHash, String author, 
+			String date, String lineContent) {
+		this.refernce = new CommitReference(commitHash, author, date);
+		this.lineContent = lineContent;
+	}
+}

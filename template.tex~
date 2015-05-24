@@ -1,0 +1,23 @@
+\documentclass[10pt]{scrartcl}
+
+\usepackage{geometry}
+
+ 	
+\geometry{
+	a4paper,
+	left=3cm,
+	right=2cm, 
+	top=2cm, 
+	bottom=2cm
+}
+
+\newcommand{\content}
+
+\input{vars.tex}
+
+\begin{document}
+	\maketitle
+	\input{content.tex}
+	\bibliographystyle{plain}
+	\bibliography{bibliography}
+\end{document}

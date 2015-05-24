@@ -1,0 +1,15 @@
+
+public class BlamedLine {
+	String commitHash;
+	String author;
+	String date;
+	String lineContent;
+	
+	public BlamedLine(String commitHash, String author, 
+			String date, String lineContent) {
+		this.commitHash = commitHash;
+		this.author = author;
+		this.date = date;
+		this.lineContent = lineContent;
+	}
+}

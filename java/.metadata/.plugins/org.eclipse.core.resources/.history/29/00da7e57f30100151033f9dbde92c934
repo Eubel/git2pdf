@@ -1,0 +1,126 @@
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+public class Blamed2tex {
+	
+	public static void main(String[] args) {
+		try {
+			
+			BlamedLine[] blamedLines = processFile(args[0]);
+			String latexContent = blamedLines2latex(blamedLines);
+			
+			//write latex file
+			PrintWriter writer = new PrintWriter("content.tex", "UTF-8");
+			writer.print(latexContent);
+			writer.close();			
+		} catch (Exception e) {
+			Debug.print("Error. " + e.getMessage());
+		}
+	}
+	
+	private static BlamedLine[] processFile(String filename) throws Exception {
+		ArrayList<BlamedLine> res = new ArrayList<>();
+		
+		// Open the file
+		FileInputStream fstream = new FileInputStream(filename);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+		String strLine;
+
+		//Read File Line By Line
+		while ((strLine = br.readLine()) != null) {
+			BlamedLine b = getBlamedLine(strLine);
+			res.add(b);
+		}
+
+		//Close the input stream
+		br.close();
+		
+		return res.toArray(new BlamedLine[res.size()]);
+	}
+	
+	/**
+	 * parses a git blame output line to a BlamedLine object
+	 * @param line sth. like 76294131 (authorA 2011-09-... 1) Text 
+	 * @return parsed line
+	 */
+	private static BlamedLine getBlamedLine(String line) {		
+		String[] parts = line.split("\t",-1);
+		
+		String commitHash = parts[0].trim();
+		String author = parts[1].substring(1).trim();
+		String date = parts[2].substring(0, 19).trim();
+		String lineContent = parts[3].substring(2).trim();
+		
+		return new BlamedLine(commitHash, author, date, lineContent);
+	}
+
+	private static String blamedLines2latex(BlamedLine[] array) {
+		String res = "";
+		
+		generateBibliography(array);
+
+		for(int i = 0; i < array.length; i++) {
+			//res += "\\begin{tabular}{p{15cm} p{2cm}}" + array[i].lineContent +
+			//		" & \\cite{" + array[i].reference.shortId() + "} \\\\ \\end{tabular}";
+			
+			//do not cite every line the same reference
+			if(array[i].lineContent.isEmpty() ||
+				array[i].lineContent.endsWith("}") ||
+				i < array.length -1 && 
+					array[i].reference.id.equals(array[i+1].reference.id))
+				res += array[i].lineContent + "\n";
+			else
+				res += array[i].lineContent + 
+					"\\cite{" + array[i].reference.shortId() + "} \\\\ \n";
+		}
+					
+		return res;
+	}
+	
+	private static void generateBibliography(
+			BlamedLine[] array) {		
+		ArrayList<CommitReference> biblio = 
+				new ArrayList<CommitReference>();
+		
+		//for each Line
+		for(BlamedLine l : array) {
+			//check duplicates
+			for(CommitReference r : biblio)
+				if(r.equals(l.reference)) // found duplicate
+					break;
+			
+			//no duplicates found --> add
+			biblio.add(l.reference);
+		}
+		
+		//commit refs -> bibtex
+		String bibtexfile = "";
+		for(CommitReference ref : biblio) {
+			bibtexfile += commitRef2Bibtex(ref);
+		}
+		
+		//write file
+		try {
+			PrintWriter writer = new PrintWriter("bibliography.bib", "UTF-8");
+			writer.print(bibtexfile);
+			writer.close();
+		}
+		catch(Exception e) {}
+	}
+
+	private static String commitRef2Bibtex(CommitReference ref) {
+		String url = "https://github.com/Eubel/test/commit/" + ref.id;
+		
+		String res = "@misc{" + ref.shortId() + ",\n";
+		res += "\t author\t= {" + ref.author + "} ,\n";
+		res += "\t title\t= {\\href{" + url + "}{Commit " + ref.shortId() + ". " + ref.date + "}} ,\n";
+		res += "\t url\t= {" + url + "} ,\n"; 
+		res += "}\n\n";
+		return res;
+	}
+}

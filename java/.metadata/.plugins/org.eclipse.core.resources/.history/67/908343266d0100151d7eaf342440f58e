@@ -1,0 +1,31 @@
+/**
+ * represents one line in one file of one git commit
+ * @author daniel
+ *
+ */
+public class BlamedLine {
+	/**
+	 * git commit id
+	 */
+	String commitHash;
+	/**
+	 * git user name of the commiter
+	 */
+	String author;
+	/**
+	 * sth. like yyyy-mm-dd hh:minmin:ss
+	 */
+	String date;
+	/**
+	 * actual content line in this commit
+	 */
+	String lineContent;
+	
+	public BlamedLine(String commitHash, String author, 
+			String date, String lineContent) {
+		this.commitHash = commitHash;
+		this.author = author;
+		this.date = date;
+		this.lineContent = lineContent;
+	}
+}

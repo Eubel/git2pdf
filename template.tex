@@ -1,0 +1,30 @@
+\documentclass[10pt]{scrartcl}
+
+\usepackage{geometry}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{url}
+\usepackage[utf8]{luainputenc}
+
+\geometry{
+	a4paper,
+	left=3cm,
+	right=2cm, 
+	top=2cm, 
+	bottom=2cm
+}
+
+\subtitle{\input{vars.tex}}
+
+\author{}
+\title{Repository Dump}
+
+\begin{document}
+	\maketitle
+	\section*{Commit log}
+	\texttt{\input{log.tex}}
+	\section*{Content}
+	\input{content.tex}
+
+	\bibliographystyle{plain}
+	\bibliography{bibliography}
+\end{document}
